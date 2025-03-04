@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello-service
+  template:
+    metadata:
+      labels:
+        app: hello-service
+    spec:
+      containers:
+        - name: hello-service
+          image: 975050024946.dkr.ecr.us-east-1.amazonaws.com/mern-backend-helloservice-repo:latest
+          ports:
+            - containerPort: 3001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  selector:
+    app: hello-service
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: profile-service-config
+data:
+  MONGO_URI: "mongodb+srv://shivamsonari376:RLiW8WDeLKttZBPn@cluster0.4grys.mongodb.net/mern"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: profile-service
+  template:
+    metadata:
+      labels:
+        app: profile-service
+    spec:
+      containers:
+        - name: profile-service
+          image: 975050024946.dkr.ecr.us-east-1.amazonaws.com/mern-backend-profileservice-repo:latest
+          ports:
+            - containerPort: 3002
+          envFrom:
+            - configMapRef:
+                name: profile-service-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile-service
+spec:
+  selector:
+    app: profile-service
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+    spec:
+      containers:
+        - name: frontend-service
+          image: 975050024946.dkr.ecr.us-east-1.amazonaws.com/mern-frontend:latest1
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+spec:
+  selector:
+    app: frontend-service
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: LoadBalancer
