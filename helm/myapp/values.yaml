@@ -1,0 +1,20 @@
+replicaCount: 5
+
+image:
+  frontend: 975050024946.dkr.ecr.us-east-1.amazonaws.com/mern-frontend:latest1
+  hello: 975050024946.dkr.ecr.us-east-1.amazonaws.com/mern-backend-helloservice-repo:latest
+  profile: 975050024946.dkr.ecr.us-east-1.amazonaws.com/mern-backend-profileservice-repo:latest
+
+service:
+  type: LoadBalancer
+
+mongoURI: "mongodb+srv://shivamsonari376:RLiW8WDeLKttZBPn@cluster0.4grys.mongodb.net/mern"
+ingress:
+  enabled: false  # Change to true if using an Ingress
+  annotations: {}
+  hosts:
+    - host: myapp.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
